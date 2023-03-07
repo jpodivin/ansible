@@ -20,7 +20,6 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import keyword
-import random
 import uuid
 
 from collections.abc import MutableMapping, MutableSequence
@@ -36,22 +35,13 @@ from ansible.parsing.splitter import parse_kv
 
 ADDITIONAL_PY2_KEYWORDS = frozenset(("True", "False", "None"))
 
-_MAXSIZE = 2 ** 32
-cur_id = 0
-node_mac = ("%012x" % uuid.getnode())[:12]
-random_int = ("%08x" % random.randint(0, _MAXSIZE))[:8]
-
 
 def get_unique_id():
-    global cur_id
-    cur_id += 1
-    return "-".join([
-        node_mac[0:8],
-        node_mac[8:12],
-        random_int[0:4],
-        random_int[4:8],
-        ("%012x" % cur_id)[:12],
-    ])
+    """Return UUID based on current node MAC and time as a string.
+    Uses built-in `uuid.uuid1`.
+    """
+
+    return str(uuid.uuid1())
 
 
 def _validate_mutable_mappings(a, b):
